@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperativa</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <p></p>
+    <div id="previous"><button>Página anterior</button></div>
+    <p></p>
+    <div id="next"><button>Página siguiente</button></div>
+    <script>
+        let pokemons=[];
+        let pag_data=[];
+        let address = "https://pokeapi.co/api/v2/pokemon";
+
+        async function getPage(url){
+            const request = await fetch(`${url}`)
+            const response = await request.json()
+            pokemons = response.results
+            pag_data = response
+            renderElements()
+        }
+        getPage(address);
+        function renderElements(){
+            let container = document.getElementById('container')
+            let flag = 0
+            pokemons.forEach((pokemon)=>{
+                container.innerHTML += `<h5>
+                    ${pokemon.name}
+                    </h5><a href="${pokemon.url}"><button>Ver detalles</button>
+                    </a>
+                `
+            })
+        }
+        document.getElementById("previous").addEventListener("click", function(){
+            if (pag_data.previous!=null) {
+                address = `${pag_data.previous}`
+                getPage(address);
+            }
+        });
+        document.getElementById("next").addEventListener("click", function(){
+            if (pag_data.next!=null) {
+                address = `${pag_data.next}`
+                getPage(address);
+            }
+        });
+    </script>
+</body>
+</html>
