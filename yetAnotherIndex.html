@@ -20,6 +20,7 @@
     <div id="next"><button>Página siguiente</button></div>
     <script>
         let pokemons=[];
+        let poke=[];
         let pag_data=[];
         let index = 1;
         let address = "https://pokeapi.co/api/v2/pokemon";
@@ -29,16 +30,42 @@
             const response = await request.json()
             pokemons = response.results
             pag_data = response
-            renderElements()
+            renderList()
+        }
+        async function consumeAndRender(url,name) {
+            console.log("Ejecutado");
+            const request = await fetch(`${url}`)
+            const response = await request.json()
+            poke = response
+            renderPokemon(name)
         }
         getPage(address);
-        function renderElements(){
+        function renderPokemon(name){
+            refreshView()
+            container.innerHTML += `<h3>${name}</h3>`
+            container.innerHTML += "<h5>Estadísticas:</h5>"
+            poke.stats.forEach((stat)=>{
+                container.innerHTML += `<p>
+                    ${stat.stat.name}: ${stat.base_stat}pts
+                    </p>
+                `
+            })
+            container.innerHTML += "<h5>Habilidades:</h5>"
+            poke.moves.forEach((ability)=>{
+                container.innerHTML += `<p>
+                    ${ability.move.name}
+                    </p>
+                `
+            })
+            container.innerHTML += `<p></p><button id ='volver' onclick = "refreshView();getPage(address)">Volver</button>`
+        }
+        function renderList(){
             let container = document.getElementById('container')
             pokemons.forEach((pokemon)=>{
                 container.innerHTML += `<div class = "card"><h5>
                     ${pokemon.name}
-                    </h5><a href="${pokemon.url}"><button>Ver detalles</button>
-                    </a></div>
+                    </h5><button onclick="consumeAndRender('${pokemon.url}','${pokemon.name}')">Ver detalles</button>
+                    </div>
                 `
             })
         }
