@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        article{
+            display: flex;
+            flex-direction: column;
+        }
+        container{
+            
+        }
+
+    </style>
+</head>
+<body>
+    <select id="filter-races"></select>
+    <div id="container"></div>
+    <script>
+        let items = [];
+        console.log ("alo")
+        async function getDataFromServer(){
+            const request = await fetch("https://dragonball-api.com/api/characters")
+            const response = await request.json()
+            items = response.items
+            createFilter()
+            renderElements()
+        }
+        getDataFromServer();
+        console.log(items)
+        function createFilter(){
+            let races = []
+            items.forEach((item)=>{
+                if(!races.includes(item.race)){
+                    races.push(item.race)
+                }
+            })
+            let select = document.getElementById('filter-races')
+            select.innerHTML += `<option value="all">Mostrar todos</option>`
+            races.forEach((race)=>{
+                select.innerHTML += `<option value="${race}">${race}</option>`
+            })
+        }
+        function renderElements(){
+            let select = document.getElementById('filter-races')
+            let container = document.getElementById('container')
+            let toRender = items
+            if(select.value != 'all'){
+                toRender = items.filter((element)=>{
+                    return element.race == select.value
+                })
+            }
+            container.innerHTML = ''
+            toRender.forEach((item)=>{
+                container.innerHTML += `
+                <article>
+                    <h4>${item.name}</h4>
+                    <p>${item.race}</p>
+                    <img src="${item.image}" width="150px"/>
+                </article>`
+            })
+        }
+        document.getElementById('filter-races').addEventListener('change')
+
+    </script>
+</body>
+</html>
